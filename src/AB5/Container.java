@@ -1,8 +1,12 @@
 package AB5;
+
+
 public class Container {
 
 	private Object _obj;
+	
 	private int _key;
+	
 	public Container(Object obj, int key)
 	{
 		_key = key;

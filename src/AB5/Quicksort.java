@@ -1,159 +1,143 @@
 package AB5;
+
 public class Quicksort {
-	
-	private Container[] _array;
-	private Container _pivot;
-	private int _pivotkey;
-	private int _count;
 
 	/**
-	 * 
-	 * @param arr das zu Sortierende Array
+	 * Zum zaehlen der Rechenoperationen.
 	 */
-	public void sort(Container[] arr)
-	{
-		_array = arr;
-		_count = 0;
-		sort(0,arr.length);
-	}
-	
-	private void sort(int anf, int ende)
-	{
-		if(ende-anf > 1)
-		{
-			ermittlePivotRechts(anf,ende);
-			for(int i = anf; i < _pivotkey; i++)
-			{
-					if(_array[i].getKey()> _pivot.getKey())
-					{
-						_count++;
-						swop(i);
-						i--;
-					}
-			}
-			for(int i = _pivotkey+1; i < ende;i++)
-			{
-				if(_array[i].getKey()< _pivot.getKey())
-				{
-					_count++;
-					swopVor(i);
-					i--;
-				}
-			}
-			int cut = _pivotkey;
-			sort(anf,cut);
-			sort(cut+1,ende);
+	private long counter = 0;
+
+	/**
+	 * Sortiert eine Liste nach dem Algorithmus Quicksort.
+	 * 
+	 * @param array Feld
+	 * @param links Bereichsgrenze
+	 * @param rechts Bereichsgrenze
+	 * @param v Pivotsuchverfahren
+	 * @throws Exception
+	 */
+	public void quicksort(Container[] array, int links, int rechts, Pivotsuchverfahren v) throws Exception {
+
+		if (array == null) {
+			throw new Exception();
 		}
-	}
-	
-	private void swopVor(int index)
-	{
-		Container obj = _array[index];
-		for(;index > _pivotkey;index--)
-		{
-			_array[index] = _array[index-1];
-		}
-		_array[_pivotkey] = obj;
-		_pivotkey++;
-	}
-	
-	private void swop(int index)
-	{
-		Container obj = _array[index];
-		for(;index < _pivotkey;index++)
-		{
-			_array[index] = _array[index+1];
-		}
-		_array[_pivotkey] = obj;
-		_pivotkey--;
-	}
-	
-	private void ermittlePivotRechts(int anf, int ende)
-	{
-		_pivotkey = ende-1;
-		_pivot = _array[ende-1];
-	}
-	
-	private void ermittlePivotMedian(int anf, int ende)
-	{
-		int a = _array[anf].getKey();
-		int b = _array[ende-1].getKey();
-		int c = _array[(ende-anf)/2+anf].getKey();
-		char result;
-		if(a < b)
-		{
-			if(c < a)
-				result = 'a';
-			else if(c<b)
-				result = 'c';
-			else
-				result = 'b';
-		}
-		else if(c < b)
-			result = 'b';
-		else if(c < a)
-			result = 'c';
-		else
-			result = 'a';
-		Container ergebnis;
-		switch(result){
-		case 'a': ergebnis =  _array[anf]; _pivotkey = anf; break;
-		case 'b': ergebnis =  _array[ende-1]; _pivotkey = ende-1; break;
-		case 'c': ergebnis = _array[(ende-anf)/2+anf]; 	_pivotkey = (ende-anf)/2+anf; break;
-		default : ergebnis = _array[anf]; _pivotkey = 0; break;
-		}
-		_pivot = ergebnis;
 		
+		// Abbruch bei weniger als zwei Elementen
+		if (links < rechts && rechts >= 0 && links >= 0) {
+
+			// Init
+			int[] pq = new int[2];
+			int p, q;
+
+			// Sortiere grob in zwei Partitionen
+			pq = partitioniere(array, links, rechts, v);
+			p = pq[0];
+			q = pq[1];
+
+			// sortiere die Partitionen rekursiv
+			quicksort(array, links, p, v);
+			quicksort(array, q, rechts, v);
+		}
+	}
+
+	/**
+	 * Sortiert grob in zwei Partionen.
+	 * 
+	 * @param array Feld
+	 * @param links Bereichsgrenze
+	 * @param rechts Bereichsgrenze
+	 * @param v Pivotsuchverfahren
+	 * @return Partionsgrenzen
+	 */
+  private int[] partitioniere(Container[] array, int links, int rechts, Pivotsuchverfahren v) {
+
+	  int[] ji = new int[2];
+	  int i = links;
+	  int j = rechts;
+
+	  // Pivotelement
+	  Container p = pivotauswahl(array, links, rechts, v);
+
+	  while (i <= j) {
+		  counter++;
+		  // suche Tauschkandidaten von links
+		  while (array[i].getKey() < p.getKey()) {
+			  counter++;
+			  i++;
+		  }
+		  
+		  // suche Tauschkandidaten von rechts
+		  while (array[j].getKey() > p.getKey()) {
+			  counter++;
+			  j--;
+		  }
+		
+		  // tausche, falls noch nicht fertig sortiert
+		  if (i <= j) {
+			  counter++;
+			  Container tmp = array[i];
+			  array[i] = array[j];
+			  array[j] = tmp;
+			  i++;
+			  j--;
+		  }
+	  }
+
+	  ji[0] = j;
+	  ji[1] = i;
+	  return ji;
+  }
+
+/**
+   * @param array Feld
+   * @param links Bereichgrenze
+   * @param rechts Bereichgrenze
+   * @param v Pivotsuchverfahren
+   * @return pivotelement
+   */
+  private Container pivotauswahl(Container[] array, int links, int rechts, Pivotsuchverfahren v) {
+    Container pivot = null;
+    switch (v) {
+    case RECHTS:
+      pivot = array[rechts];
+      break;
+    case MEDIAN:
+      pivot = median(array[links], array[(links + rechts) / 2], array[rechts]);
+      break;
+    case ZUFAELLIG:
+      pivot = array[(int) (Math.random() * (rechts - links + 1) + links)];
+      break;
+    default:
+      break;
+    }
+    return pivot;
+  }
+
+  	/**
+	 * 
+	 * @param links Bereichsgrenze
+	 * @param mitte Mittelwert im Bereich
+	 * @param rechts Bereichsgrenze
+	 * @return den Median der drei Werte
+	 */
+	private Container median(Container links, Container mitte, Container rechts) {
+		// Ueberprueft, ob mitte der Median ist
+		if (mitte.getKey() > rechts.getKey() ^ mitte.getKey() > links.getKey()) {
+			return mitte;
+		}
+
+		// Ueberprueft, ob rechts der Median ist
+		if (rechts.getKey() > mitte.getKey() ^ rechts.getKey() > links.getKey()) {
+			return rechts;
+		}
+		// sonst muss es links sein
+		return links;
 	}
 	
-	private void ermittlePivotRandom(int anf, int ende)
+	
+	public long getCounter()
 	{
-		int num;
-		do
-		{
-			num = (int) (Math.random()*10*_array.length) % ende;
-		}while(num < anf || num > ende-1);
-		_pivotkey = num;
-		_pivot = _array[num];
+		return counter;
 	}
-	
-	public int getCount()
-	{
-		return _count;
-	}
-	
-//	private void sort2(int anf, int ende)
-//	{
-//		if(ende-anf > 1)
-//		{
-//			int anf1 = anf;
-//			ermittlePivotRechts(anf,ende);
-//			swop(_pivotkey,ende-1);
-//			_pivotkey = ende-1;
-//			for(int i = anf; i < ende-1; i++)
-//			{
-//					if(_array[_pivotkey-1].getKey()> _pivot.getKey())
-//					{
-//						swop(_pivotkey,_pivotkey-1);
-//						_pivotkey--;
-//					}
-//					else
-//					{
-//						swop(anf1,_pivotkey-1);
-//						anf1++;
-//					};
-//			}
-//			sort(anf,anf1);
-//			sort(anf1+1,ende);
-//		}
-//	}
-//	
-//	private void swop2(int a, int b)
-//	{
-//		if(a != b){
-//		Container obj = _array[a];
-//		_array[a] = _array[b];
-//		_array[b] = obj;
-//		}
-//	}
+
 }

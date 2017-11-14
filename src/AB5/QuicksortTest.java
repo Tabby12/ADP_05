@@ -1,163 +1,196 @@
 package AB5;
+
 import static org.junit.Assert.*;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
 public class QuicksortTest {
-	private Quicksort _sort;
+
+	@Test
+	public void pivotRechts() throws Exception {
+		Container[] a = GetContainerArrayFromIntegerArray( new Integer[] { 20, 54, 28, 31, 5, 24, 39, 14, 1, 15 } );
+		Container[] atest = GetContainerArrayFromIntegerArray( new Integer[] { 1, 5, 14, 15, 20, 24, 28, 31, 39, 54 } );
+		
+		Quicksort sort = new Quicksort();
+		sort.quicksort(a, 0, a.length - 1, Pivotsuchverfahren.RECHTS);
+		assertTrue("Pivotrechts Fehler", Arrays.equals(a, atest));
+
+		Container[] b = GetContainerArrayFromIntegerArray( new Integer[] { 54, 20 } );
+		Container[] btest = GetContainerArrayFromIntegerArray( new Integer[] { 20, 54 } );
+		sort.quicksort(b, 0, b.length - 1, Pivotsuchverfahren.RECHTS);
+		assertTrue("Pivotrechts Fehler", Arrays.equals(b, btest));
+
+		Container[] c = GetContainerArrayFromIntegerArray( new Integer[] { 6, 20, 65, 100 } );
+		Container[] ctest = GetContainerArrayFromIntegerArray( new Integer[] { 6, 20, 65, 100 } );
+		sort.quicksort(c, 0, c.length - 1, Pivotsuchverfahren.RECHTS);
+		assertTrue("Pivotrechts Fehler", Arrays.equals(c, ctest));
+
+	}
+
+	@Test
+	public void pivotMedian() throws Exception {
+		Container[] a = GetContainerArrayFromIntegerArray( new Integer[] { 20, 54, 28, 31, 5, 24, 39, 14, 1, 15 } );
+		Container[] atest = GetContainerArrayFromIntegerArray( new Integer[] { 1, 5, 14, 15, 20, 24, 28, 31, 39, 54 } );
+		Quicksort sort = new Quicksort();
+		sort.quicksort(a, 0, a.length - 1, Pivotsuchverfahren.MEDIAN);
+		assertTrue("Pivotmdeian Fehler", Arrays.equals(a, atest));
+
+		Container[] b = GetContainerArrayFromIntegerArray( new Integer[] { 54, 20 } );
+		Container[] btest = GetContainerArrayFromIntegerArray( new Integer[] { 20, 54 } );
+		sort.quicksort(b, 0, b.length - 1, Pivotsuchverfahren.MEDIAN);
+		assertTrue("Pivotmdeian Fehler", Arrays.equals(b, btest));
+
+		Container[] c = GetContainerArrayFromIntegerArray( new Integer[] { 6, 20, 65, 100 } );
+		Container[] ctest = GetContainerArrayFromIntegerArray( new Integer[] { 6, 20, 65, 100 } );
+		sort.quicksort(c, 0, c.length - 1, Pivotsuchverfahren.MEDIAN);
+		assertTrue("Pivotmdeian Fehler", Arrays.equals(c, ctest));
+	}
+
+	@Test
+	public void pivotZufaellig() throws Exception {
+		Container[] a = GetContainerArrayFromIntegerArray( new Integer[] { 20, 54, 28, 31, 5, 24, 39, 14, 1, 15 } );
+		Container[] atest = GetContainerArrayFromIntegerArray( new Integer[] { 1, 5, 14, 15, 20, 24, 28, 31, 39, 54 } );
+		Quicksort sort = new Quicksort();
+		sort.quicksort(a, 0, a.length - 1, Pivotsuchverfahren.ZUFAELLIG);
+		assertTrue("Pivotzufaellig Fehler", Arrays.equals(a, atest));
+
+		Container[] b = GetContainerArrayFromIntegerArray( new Integer[] { 54, 20 } );
+		Container[] btest = GetContainerArrayFromIntegerArray( new Integer[] { 20, 54 } );
+		sort.quicksort(b, 0, b.length - 1, Pivotsuchverfahren.ZUFAELLIG);
+		assertTrue("Pivotzufaellig Fehler", Arrays.equals(b, btest));
+
+		Container[] c = GetContainerArrayFromIntegerArray( new Integer[] { 6, 20, 65, 100 } );
+		Container[] ctest = GetContainerArrayFromIntegerArray( new Integer[] { 6, 20, 65, 100 } );
+		sort.quicksort(c, 0, c.length - 1, Pivotsuchverfahren.ZUFAELLIG);
+		assertTrue("Pivotzufaellig Fehler", Arrays.equals(c, ctest));
+	}
+
+	@Test
+	public void einElement() throws Exception {
+		Container[] a = GetContainerArrayFromIntegerArray( new Integer[] { 20 } );
+		Container[] atest = GetContainerArrayFromIntegerArray( new Integer[] { 20 } );
+		Quicksort sort = new Quicksort();
+		sort.quicksort(a, 0, a.length - 1, Pivotsuchverfahren.ZUFAELLIG);
+		assertTrue("ein Element Fehler zufall", Arrays.equals(a, atest));
+		sort.quicksort(a, 0, a.length - 1, Pivotsuchverfahren.MEDIAN);
+		assertTrue("ein Element Fehler median", Arrays.equals(a, atest));
+		sort.quicksort(a, 0, a.length - 1, Pivotsuchverfahren.RECHTS);
+		assertTrue("ein Element Fehler rechts", Arrays.equals(a, atest));
+	}
+
+	@Test
+	public void keinElement() throws Exception {
+		Container[] a = GetContainerArrayFromIntegerArray( new Integer[] {} );
+		Container[] atest = GetContainerArrayFromIntegerArray( new Integer[] {} );
+		Quicksort sort = new Quicksort();
+		sort.quicksort(a, 0, a.length - 1, Pivotsuchverfahren.ZUFAELLIG);
+		assertTrue("ein Element Fehler zufall", Arrays.equals(a, atest));
+		sort.quicksort(a, 0, a.length - 1, Pivotsuchverfahren.MEDIAN);
+		assertTrue("ein Element Fehler median", Arrays.equals(a, atest));
+		sort.quicksort(a, 0, a.length - 1, Pivotsuchverfahren.RECHTS);
+		assertTrue("ein Element Fehler rechts", Arrays.equals(a, atest));
+	}
+
+	@Test
+	public void leereListe() {
+		Quicksort sort = new Quicksort();
+		try {
+			sort.quicksort(null, 0, 0, Pivotsuchverfahren.ZUFAELLIG);
+			assertTrue("Fehler: Es wurde keine Exception geworfen!", false);
+		} catch (Exception e) {
+			// Alles richtig
+		}
+	}
 	
-	public QuicksortTest()
+	private void reportPerformanceCounter(Pivotsuchverfahren pivot) throws Exception
 	{
-		_sort = new Quicksort();
-	}
+		int groesse = 100000;
+		int[] testValues = {1, 10, 100, 1000, 10000, 100000};
+		Container [] arr = new Container[groesse];
+		for(int i = 0; i < groesse; i++)
+		{
+			arr[i] = new Container(i,i);
+		}
+		Quicksort sort = null;
+		
+		for(int i=0; i<testValues.length; i++)
+		{
+			try
+			{
+				sort = new Quicksort();
+				sort.quicksort(arr,0,testValues[i]-1, pivot);
+				System.out.println(sort.getCounter());
+			}
+			catch (StackOverflowError e)
+			{
+				System.err.println("Stack overflow error on 10000 elements");
+			}
+		}
+		
+		System.out.println();
 
-	@Test
-	public void test() {
-		Container [] arr = new Container[7];
-		Container a = new Container(0,0);
-		Container b = new Container(5,5);
-		Container c = new Container(2,2);
-		Container d = new Container(9,9);
-		Container e = new Container(8,8);
-		Container f = new Container(1,1);
-		Container g = new Container(3,3);
-		arr[0] = a;
-		arr[1] = b;
-		arr[2] = c;
-		arr[3] = d;
-		arr[4] = e;
-		arr[5] = f;
-		arr[6] = g;
-		_sort.sort(arr);
-		assertEquals(arr[0],a);
-		assertEquals(arr[1],f);
-		assertEquals(arr[2],c);
-		assertEquals(arr[3],g);
-		assertEquals(arr[4],b);
-		assertEquals(arr[5],e);
-		assertEquals(arr[6],d);
-		System.out.println(_sort.getCount());
+		Set<Integer> sack = new HashSet<Integer>();
+		for(int i = 0; i < groesse; i++)
+		{
+			int j;
+			do
+			{
+				j = (int) (Math.random()*groesse);
+			}while(!sack.add(j));
+			arr[j] = new Container(i,i);
+		}
+		
+		for(int i=0; i<testValues.length; i++)
+		{
+			try
+			{
+				sort = new Quicksort();
+				sort.quicksort(arr,0,testValues[i]-1, pivot);
+				System.out.println(sort.getCounter());
+			}
+			catch (StackOverflowError e)
+			{
+				System.err.println("Stack overflow error on 10000 elements");
+			}
+		}
 	}
 	
 	@Test
-	public void test2() {
-		Container [] arr = new Container[7];
-		Container a = new Container(0,0);
-		Container f = new Container(1,1);
-		Container e = new Container(8,8);
-		Container g = new Container(2,2);
-		Container d = new Container(9,9);		
-		Container c = new Container(2,2);		
-		Container b = new Container(2,2);		
-		arr[0] = a;
-		arr[1] = f;
-		arr[2] = e;
-		arr[3] = g;
-		arr[4] = d;
-		arr[5] = c;
-		arr[6] = b;
-		_sort.sort(arr);
-		assertEquals(arr[0],a);
-		assertEquals(arr[1],f);
-		assertEquals(arr[2],g);
-		assertEquals(arr[3],c);
-		assertEquals(arr[4],b);
-		assertEquals(arr[5],e);
-		assertEquals(arr[6],d);
-		System.out.println(_sort.getCount());
+	public void testRechts() throws Exception {
+		System.out.println("Reporting performance counter for RECHTS");
+		reportPerformanceCounter(Pivotsuchverfahren.RECHTS);
+		assertTrue(true);
+		System.out.println("End reporting performance counter for RECHTS\n");
 	}
 	
 	@Test
-	public void test3() {
-		Container [] arr = new Container[7];
-		Container a = new Container(0,0);
-		Container b = new Container(1,1);
-		Container c = new Container(2,2);
-		Container d = new Container(3,3);
-		Container e = new Container(4,4);
-		Container f = new Container(5,5);
-		Container g = new Container(6,6);
-		arr[0] = a;
-		arr[1] = b;
-		arr[2] = c;
-		arr[3] = d;
-		arr[4] = e;
-		arr[5] = f;
-		arr[6] = g;
-		_sort.sort(arr);
-		assertEquals(arr[0],a);
-		assertEquals(arr[1],b);
-		assertEquals(arr[2],c);
-		assertEquals(arr[3],d);
-		assertEquals(arr[4],e);
-		assertEquals(arr[5],f);
-		assertEquals(arr[6],g);
-		System.out.println(_sort.getCount());
-	}
-
-	@Test
-	public void test4() {
-		Container [] arr = new Container[7];
-		Container a = new Container(0,0);
-		Container b = new Container(1,1);
-		Container c = new Container(2,2);
-		Container d = new Container(3,3);
-		Container e = new Container(3,3);
-		Container f = new Container(5,5);
-		Container g = new Container(6,6);
-		arr[0] = a;
-		arr[1] = b;
-		arr[2] = c;
-		arr[3] = d;
-		arr[4] = e;
-		arr[5] = f;
-		arr[6] = g;
-		_sort.sort(arr);
-		assertEquals(arr[0],a);
-		assertEquals(arr[1],b);
-		assertEquals(arr[2],c);
-		assertEquals(arr[3],d);
-		assertEquals(arr[4],e);
-		assertEquals(arr[5],f);
-		assertEquals(arr[6],g);
-		System.out.println(_sort.getCount());
+	public void testMedian() throws Exception {
+		System.out.println("Reporting performance counter for MEDIAN");
+		reportPerformanceCounter(Pivotsuchverfahren.MEDIAN);
+		assertTrue(true);
+		System.out.println("End reporting performance counter for MEDIAN\n");
 	}
 	
 	@Test
-	public void testBestCaseRechts() {
-		Container [] arr = new Container[10];
-		Container a = new Container(0,0);
-		Container b = new Container(1,1);
-		Container c = new Container(2,2);
-		Container d = new Container(3,3);
-		Container e = new Container(4,4);
-		Container f = new Container(5,5);
-		Container g = new Container(6,6);
-		Container h = new Container(7,7);
-		Container i = new Container(8,8);
-		Container j = new Container(9,9);
-		arr[0] = h;
-		arr[1] = i;
-		arr[2] = j;
-		arr[3] = f;
-		arr[4] = a;
-		arr[5] = g;
-		arr[6] = d;
-		arr[7] = b;
-		arr[8] = c;
-		arr[9] = e;
-		_sort.sort(arr);
-		assertEquals(arr[0],a);
-		assertEquals(arr[1],b);
-		assertEquals(arr[2],c);
-		assertEquals(arr[3],d);
-		assertEquals(arr[4],e);
-		assertEquals(arr[5],f);
-		assertEquals(arr[6],g);
-		assertEquals(arr[7],h);
-		assertEquals(arr[8],i);
-		assertEquals(arr[9],j);
-		System.out.println(_sort.getCount());
+	public void testZufaellig() throws Exception {
+		System.out.println("Reporting performance counter for ZUFAELLIG");
+		reportPerformanceCounter(Pivotsuchverfahren.ZUFAELLIG);
+		assertTrue(true);
+		System.out.println("End reporting performance counter for ZUFAELLIG\n");
+	}
+	
+	private Container[] GetContainerArrayFromIntegerArray(Integer[] intArray)
+	{
+		Container[] containerArray = new Container[intArray.length];
+		for(int i=0; i<intArray.length; i++)
+		{
+			containerArray[i] = new Container(null, intArray[i]);
+		}
+		return containerArray;
 	}
 
 }
